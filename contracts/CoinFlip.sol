@@ -38,8 +38,8 @@ contract CoinFlip {
 
     function play(uint256 coinOption) public payable {
         require(msg.value == betPrice, "Invalid price");
+        require(coinOption == 0 || coinOption == 1, "Invalid coin option");
         if (coinOption == 0) {
-            // eligió heads
             if (lastTail < firstTail) {
                 enqueue(msg.sender, 0);
                 balance += msg.value;
@@ -47,21 +47,18 @@ contract CoinFlip {
                 address player = dequeue(1);
                 uint256 result = flipCoin();
                 if (result == 0) {
-                    // gana heads
                     headsWins += 1;
                     gamesCount += 1;
                     emit Result(msg.sender, player, result);
                     payable(msg.sender).transfer(400000000000000000);
                 } else {
-                    // gana tails
                     tailsWins += 1;
                     gamesCount += 1;
                     emit Result(player, msg.sender, result);
                     payable(player).transfer(400000000000000000);
                 }
             }
-        } else if (coinOption == 1) {
-            // eligió tails
+        } else {
             if (lastHead < firstHead) {
                 enqueue(msg.sender, 1);
                 balance += msg.value;
@@ -69,13 +66,11 @@ contract CoinFlip {
                 address player = dequeue(0);
                 uint256 result = flipCoin();
                 if (result == 0) {
-                    // gana heads
                     headsWins += 1;
                     gamesCount += 1;
                     emit Result(player, msg.sender, result);
                     payable(player).transfer(400000000000000000);
                 } else {
-                    // gana tails
                     tailsWins += 1;
                     gamesCount += 1;
                     emit Result(msg.sender, player, result);
@@ -99,12 +94,10 @@ contract CoinFlip {
         if (queue == 0) {
             require(lastHead >= firstHead, "Head queue is empty");
             player = headsQueue[firstHead];
-            delete headsQueue[firstHead];
             firstHead += 1;
         } else if (queue == 1) {
             require(lastTail >= firstTail, "Tail queue is Empty");
             player = tailsQueue[firstTail];
-            delete tailsQueue[firstTail];
             firstTail += 1;
         }
     }
@@ -118,6 +111,4 @@ contract CoinFlip {
                 )
             ) % 2;
     }
-
-    function setBetPrice() public view onlyOwner returns (bool success) {}
 }
