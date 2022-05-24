@@ -90,6 +90,12 @@ contract("CoinFlip", function (accounts) {
     const gamesCount = BigInt(await instance.gamesCount.call());
     assert.equal(gamesCount, 1);
 
+    const isFirstPlayerInQueue = await instance.isPlayerInQueue(accounts[0]);
+    assert.equal(isFirstPlayerInQueue, false);
+
+    const isSecondPlayerInQueue = await instance.isPlayerInQueue(accounts[0]);
+    assert.equal(isSecondPlayerInQueue, false);
+
     // const firstBalanceAfter = BigInt(await web3.eth.getBalance(accounts[0]));
     // const secondBalanceAfter = BigInt(await web3.eth.getBalance(accounts[1]));
   });
