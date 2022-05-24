@@ -9,7 +9,7 @@ const CoinFlip = artifacts.require("CoinFlip");
  * See docs: https://www.trufflesuite.com/docs/truffle/testing/writing-tests-in-javascript
  */
 contract("CoinFlip", function (accounts) {
-  it("shoud initialize the variables", async function () {
+  it("should initialize the variables", async function () {
     const instance = await CoinFlip.deployed();
 
     const betPrice = await instance.betPrice.call();
