@@ -1,3 +1,6 @@
+const { assert } = require("chai");
+
+require("chai").use(require("chai-as-promised")).should();
 const CoinFlip = artifacts.require("CoinFlip");
 
 /*
@@ -25,6 +28,18 @@ contract("CoinFlip", function (accounts) {
     assert.equal(tailsWins, 0);
   });
 
+  it("should be rejected because bet price and msg.value are not equal", async function () {
+    const instance = await CoinFlip.deployed();
+
+    await instance.play(0, { from: accounts[0], value: 400000000000000000 }).should.be.rejectedWith("Invalid price");
+  });
+
+  it("should be rejected due to invalid coin option", async function () {
+    const instance = await CoinFlip.deployed();
+
+    await instance.play(2, { from: accounts[0], value: 200000000000000000 }).should.be.rejectedWith("Invalid coin option");
+  });
+
   it("should enqueue the first player", async function () {
     const instance = await CoinFlip.deployed();
 
@@ -34,6 +49,15 @@ contract("CoinFlip", function (accounts) {
     await instance.play(0, { from: accounts[0], value: 200000000000000000 });
     balance = BigInt(await instance.balance.call());
     assert.equal(balance, 200000000000000000);
+
+    const isPlayerInQueue = await instance.isPlayerInQueue(accounts[0]);
+    assert.equal(isPlayerInQueue, true);
+  });
+
+  it("should be rejected because first player is already in queue", async function () {
+    const instance = await CoinFlip.deployed();
+
+    await instance.play(1, { from: accounts[0], value: 200000000000000000 }).should.be.rejectedWith("You are in queue already");
   });
 
   it("should flip a coin and send the prize to the winner", async function () {
