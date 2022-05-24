@@ -16,6 +16,7 @@ contract CoinFlip {
     uint256 public tailsWins = 0;
 
     // virtual queues
+    mapping(address => bool) private playersInQueue;
     mapping(uint256 => address) private headsQueue;
     mapping(uint256 => address) private tailsQueue;
     uint256 public firstHead = 1;
@@ -39,6 +40,7 @@ contract CoinFlip {
     function play(uint256 coinOption) public payable {
         require(msg.value == betPrice, "Invalid price");
         require(coinOption == 0 || coinOption == 1, "Invalid coin option");
+        require(!isPlayerInQueue(msg.sender), "You are in queue already");
         if (coinOption == 0) {
             if (lastTail < firstTail) {
                 enqueue(msg.sender, 0);
@@ -46,14 +48,13 @@ contract CoinFlip {
             } else {
                 address player = dequeue(1);
                 uint256 result = flipCoin();
+                gamesCount += 1;
                 if (result == 0) {
                     headsWins += 1;
-                    gamesCount += 1;
                     emit Result(msg.sender, player, result);
                     payable(msg.sender).transfer(400000000000000000);
                 } else {
                     tailsWins += 1;
-                    gamesCount += 1;
                     emit Result(player, msg.sender, result);
                     payable(player).transfer(400000000000000000);
                 }
@@ -65,14 +66,13 @@ contract CoinFlip {
             } else {
                 address player = dequeue(0);
                 uint256 result = flipCoin();
+                gamesCount += 1;
                 if (result == 0) {
                     headsWins += 1;
-                    gamesCount += 1;
                     emit Result(player, msg.sender, result);
                     payable(player).transfer(400000000000000000);
                 } else {
                     tailsWins += 1;
-                    gamesCount += 1;
                     emit Result(msg.sender, player, result);
                     payable(msg.sender).transfer(400000000000000000);
                 }
@@ -88,6 +88,7 @@ contract CoinFlip {
             lastTail += 1;
             headsQueue[lastTail] = player;
         }
+        playersInQueue[player] = true;
     }
 
     function dequeue(uint256 queue) private returns (address player) {
@@ -100,6 +101,7 @@ contract CoinFlip {
             player = tailsQueue[firstTail];
             firstTail += 1;
         }
+        playersInQueue[player] = false;
     }
 
     function flipCoin() private returns (uint256 result) {
@@ -110,5 +112,9 @@ contract CoinFlip {
                     abi.encodePacked(block.timestamp, msg.sender, randNonce)
                 )
             ) % 2;
+    }
+
+    function isPlayerInQueue(address player) public view returns (bool) {
+        return playersInQueue[player];
     }
 }
