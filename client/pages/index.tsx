@@ -1,11 +1,13 @@
 import type { NextPage } from "next";
 import { useState, useEffect } from "react";
+import styles from "../styles/Home.module.scss";
 
 // web3
 import { ethers, providers } from "ethers";
 import Web3Modal from "web3modal";
 import Core from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import Connect from "../components/Connect";
 
 const Home: NextPage = () => {
   const [web3Modal, setWeb3Modal] = useState<Core | null>(null);
@@ -57,7 +59,7 @@ const Home: NextPage = () => {
     });
   }
 
-  return <div>{!address ? <button onClick={connectWallet}>Connect</button> : <>{address}</>}</div>;
+  return <div className={styles.container}>{!address ? <Connect connectWallet={connectWallet} /> : <>{address}</>}</div>;
 };
 
 export default Home;
