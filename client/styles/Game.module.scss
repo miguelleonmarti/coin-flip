@@ -1,0 +1,54 @@
+@import "_variables";
+
+.gameContainer {
+    width: 600px;
+    height: 600px;
+    .options {
+        border: 1px solid $prime;
+        border-radius: 0.5rem;
+        height: 50%;
+        width: 100%;
+        display: flex;
+        overflow: hidden;
+        cursor: pointer;
+        
+        .heads, .tails {
+            width: 50%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            transition: all 0.3s ease-in;
+            color: $second; 
+            background: $prime;
+
+
+            &[aria-disabled="true"] {
+                color: $prime; 
+                background: $second;
+            }
+        }
+    }
+    .buttons {
+        height: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .play {
+            border: 1px solid $prime;
+            border-radius: 0.5rem;
+            background: $second;
+            color: $prime;
+            cursor: pointer;
+            padding: 1rem;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            
+            &:hover {
+                background: $prime;
+                color: $second;
+            }
+        }
+    }
+}

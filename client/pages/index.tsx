@@ -7,7 +7,10 @@ import { ethers, providers } from "ethers";
 import Web3Modal from "web3modal";
 import Core from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+
+// components
 import Connect from "../components/Connect";
+import Game from "../components/Game";
 
 const Home: NextPage = () => {
   const [web3Modal, setWeb3Modal] = useState<Core | null>(null);
@@ -59,7 +62,7 @@ const Home: NextPage = () => {
     });
   }
 
-  return <div className={styles.container}>{!address ? <Connect connectWallet={connectWallet} /> : <>{address}</>}</div>;
+  return <div className={styles.container}>{!address ? <Connect connectWallet={connectWallet} /> : <Game />}</div>;
 };
 
 export default Home;
