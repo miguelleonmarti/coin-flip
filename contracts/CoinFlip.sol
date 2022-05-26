@@ -44,6 +44,7 @@ contract CoinFlip {
             if (lastTail < firstTail) {
                 enqueue(msg.sender, 0);
                 balance += msg.value;
+                emit NeedToWait(msg.sender);
             } else {
                 address player = dequeue(1);
                 uint256 result = flipCoin();
@@ -62,6 +63,7 @@ contract CoinFlip {
             if (lastHead < firstHead) {
                 enqueue(msg.sender, 1);
                 balance += msg.value;
+                emit NeedToWait(msg.sender);
             } else {
                 address player = dequeue(0);
                 uint256 result = flipCoin();
