@@ -26,7 +26,6 @@ contract CoinFlip {
 
     event NeedToWait(address player);
     event Result(address winner, address loser, uint256 result);
-    event BetPriceUpdate(uint256 betPrice);
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Only owner can call this.");
