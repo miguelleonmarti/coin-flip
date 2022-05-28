@@ -87,7 +87,7 @@ contract CoinFlip {
             headsQueue[lastHead] = player;
         } else if (queue == 1) {
             lastTail += 1;
-            headsQueue[lastTail] = player;
+            tailsQueue[lastTail] = player;
         }
         playersInQueue[player] = true;
     }
@@ -97,7 +97,7 @@ contract CoinFlip {
             require(lastHead >= firstHead, "Head queue is empty");
             player = headsQueue[firstHead];
             firstHead += 1;
-        } else if (queue == 1) {
+        } else {
             require(lastTail >= firstTail, "Tail queue is Empty");
             player = tailsQueue[firstTail];
             firstTail += 1;
