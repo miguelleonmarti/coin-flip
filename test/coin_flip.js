@@ -3,17 +3,15 @@ const { assert } = require("chai");
 require("chai").use(require("chai-as-promised")).should();
 const CoinFlip = artifacts.require("CoinFlip");
 
-/*
- * uncomment accounts to access the test accounts made available by the
- * Ethereum client
- * See docs: https://www.trufflesuite.com/docs/truffle/testing/writing-tests-in-javascript
- */
+// constants
+const BET_PRICE = 200000000000000000;
+
 contract("CoinFlip", function (accounts) {
   it("should initialize the variables", async function () {
     const instance = await CoinFlip.deployed();
 
     const betPrice = await instance.betPrice.call();
-    assert.equal(BigInt(betPrice), 200000000000000000);
+    assert.equal(BigInt(betPrice), BET_PRICE);
 
     const balance = BigInt(await instance.balance.call());
     assert.equal(balance, 0);
@@ -29,15 +27,15 @@ contract("CoinFlip", function (accounts) {
   });
 
   it("should be rejected because bet price and msg.value are not equal", async function () {
-    const instance = await CoinFlip.deployed();
+    // const instance = await CoinFlip.deployed();
 
-    await instance.play(0, { from: accounts[0], value: 400000000000000000 }).should.be.rejectedWith("Invalid price");
+    await instance.play(0, { from: accounts[0], value: 2 * BET_PRICE }).should.be.rejectedWith("Invalid price");
   });
 
   it("should be rejected due to invalid coin option", async function () {
     const instance = await CoinFlip.deployed();
 
-    await instance.play(2, { from: accounts[0], value: 200000000000000000 }).should.be.rejectedWith("Invalid coin option");
+    await instance.play(2, { from: accounts[0], value: BET_PRICE }).should.be.rejectedWith("Invalid coin option");
   });
 
   it("should enqueue the first player in the heads queue", async function () {
@@ -46,9 +44,9 @@ contract("CoinFlip", function (accounts) {
     let balance = BigInt(await instance.balance.call());
     assert.equal(balance, 0);
 
-    await instance.play(0, { from: accounts[0], value: 200000000000000000 });
+    await instance.play(0, { from: accounts[0], value: BET_PRICE });
     balance = BigInt(await instance.balance.call());
-    assert.equal(balance, 200000000000000000);
+    assert.equal(balance, BET_PRICE);
 
     const isPlayerInQueue = await instance.isPlayerInQueue(accounts[0]);
     assert.equal(isPlayerInQueue, true);
@@ -57,7 +55,7 @@ contract("CoinFlip", function (accounts) {
   it("should be rejected because first player is already in queue", async function () {
     const instance = await CoinFlip.deployed();
 
-    await instance.play(1, { from: accounts[0], value: 200000000000000000 }).should.be.rejectedWith("You are in queue already");
+    await instance.play(1, { from: accounts[0], value: BET_PRICE }).should.be.rejectedWith("You are in queue already");
   });
 
   it("should flip a coin and send the prize to the winner", async function () {
@@ -66,7 +64,7 @@ contract("CoinFlip", function (accounts) {
     // const firstBalanceBefore = BigInt(await web3.eth.getBalance(accounts[0]));
     // const secondBalanceBefore = BigInt(await web3.eth.getBalance(accounts[1]));
 
-    const results = await instance.play(1, { from: accounts[1], value: 200000000000000000 });
+    const results = await instance.play(1, { from: accounts[1], value: BET_PRICE });
 
     assert.equal(results.logs.length, 1);
     assert.equal(results.logs[0].event, "Result");
@@ -103,7 +101,7 @@ contract("CoinFlip", function (accounts) {
   it("should enqueue the another first player in the tails queue", async function () {
     const instance = await CoinFlip.deployed();
 
-    await instance.play(1, { from: accounts[0], value: 200000000000000000 });
+    await instance.play(1, { from: accounts[0], value: BET_PRICE });
 
     const isPlayerInQueue = await instance.isPlayerInQueue(accounts[0]);
     assert.equal(isPlayerInQueue, true);
@@ -115,7 +113,7 @@ contract("CoinFlip", function (accounts) {
     // const firstBalanceBefore = BigInt(await web3.eth.getBalance(accounts[0]));
     // const secondBalanceBefore = BigInt(await web3.eth.getBalance(accounts[1]));
 
-    const results = await instance.play(0, { from: accounts[1], value: 200000000000000000 });
+    const results = await instance.play(0, { from: accounts[1], value: BET_PRICE });
 
     assert.equal(results.logs.length, 1);
     assert.equal(results.logs[0].event, "Result");
