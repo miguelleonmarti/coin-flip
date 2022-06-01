@@ -3,6 +3,14 @@
 .gameContainer {
     width: 600px;
     height: 600px;
+
+    .coin {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+    }
+
     .options {
         border: 1px solid $prime;
         border-radius: 0.5rem;
@@ -31,7 +39,7 @@
         }
     }
     .buttons {
-        height: 50%;
+        margin: 2rem;
         display: flex;
         align-items: center;
         justify-content: center;

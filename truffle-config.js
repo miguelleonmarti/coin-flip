@@ -73,7 +73,7 @@ module.exports = {
     // }
   },
 
-  contracts_build_directory: "./client/artifacts",
+  contracts_build_directory: "./client/contracts",
   contracts_directory: "./contracts",
 
   // Set default mocha options here, use special reporters etc.

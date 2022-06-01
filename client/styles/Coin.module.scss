@@ -4,7 +4,7 @@
     height: 200px;
     width: 200px;
     background: $second;
-    margin-bottom: 50px;
+    // margin-bottom: 50px;
     border-radius: 50%;
     border-style: dotted;
     border-color: $prime;
@@ -13,8 +13,8 @@
     justify-content: center;
     align-items: center;
     position: relative;
-    transform: rotateY(0deg) rotateX(0deg);
-    transition: 1s;
+    // transform: rotateY(0deg) rotateX(0deg);
+    // transition: 1s;
     font-size: 32px;
     text-transform: uppercase;
     letter-spacing: 3px;
