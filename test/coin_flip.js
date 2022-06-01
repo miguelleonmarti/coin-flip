@@ -40,7 +40,7 @@ contract("CoinFlip", function (accounts) {
     await instance.play(2, { from: accounts[0], value: 200000000000000000 }).should.be.rejectedWith("Invalid coin option");
   });
 
-  it("should enqueue the first player", async function () {
+  it("should enqueue the first player in the heads queue", async function () {
     const instance = await CoinFlip.deployed();
 
     let balance = BigInt(await instance.balance.call());
@@ -93,7 +93,49 @@ contract("CoinFlip", function (accounts) {
     const isFirstPlayerInQueue = await instance.isPlayerInQueue(accounts[0]);
     assert.equal(isFirstPlayerInQueue, false);
 
-    const isSecondPlayerInQueue = await instance.isPlayerInQueue(accounts[0]);
+    const isSecondPlayerInQueue = await instance.isPlayerInQueue(accounts[1]);
+    assert.equal(isSecondPlayerInQueue, false);
+
+    // const firstBalanceAfter = BigInt(await web3.eth.getBalance(accounts[0]));
+    // const secondBalanceAfter = BigInt(await web3.eth.getBalance(accounts[1]));
+  });
+
+  it("should enqueue the another first player in the tails queue", async function () {
+    const instance = await CoinFlip.deployed();
+
+    await instance.play(1, { from: accounts[0], value: 200000000000000000 });
+
+    const isPlayerInQueue = await instance.isPlayerInQueue(accounts[0]);
+    assert.equal(isPlayerInQueue, true);
+  });
+
+  it("should flip a coin again and send the prize to the winner", async function () {
+    const instance = await CoinFlip.deployed();
+
+    // const firstBalanceBefore = BigInt(await web3.eth.getBalance(accounts[0]));
+    // const secondBalanceBefore = BigInt(await web3.eth.getBalance(accounts[1]));
+
+    const results = await instance.play(0, { from: accounts[1], value: 200000000000000000 });
+
+    assert.equal(results.logs.length, 1);
+    assert.equal(results.logs[0].event, "Result");
+    const { winner, loser, result } = results.logs[0].args;
+
+    if (result.toNumber() === 1) {
+      assert.equal(winner, accounts[0]);
+      assert.equal(loser, accounts[1]);
+    } else {
+      assert.equal(loser, accounts[0]);
+      assert.equal(winner, accounts[1]);
+    }
+
+    const gamesCount = BigInt(await instance.gamesCount.call());
+    assert.equal(gamesCount, 2);
+
+    const isFirstPlayerInQueue = await instance.isPlayerInQueue(accounts[0]);
+    assert.equal(isFirstPlayerInQueue, false);
+
+    const isSecondPlayerInQueue = await instance.isPlayerInQueue(accounts[1]);
     assert.equal(isSecondPlayerInQueue, false);
 
     // const firstBalanceAfter = BigInt(await web3.eth.getBalance(accounts[0]));
