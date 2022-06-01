@@ -7,13 +7,9 @@ const Stats: NextPage<{ stats: { gamesCount: number; headsWins: number; tailsWin
   }
   return (
     <div className={styles.stats}>
-      <div>
-        H: {stats.headsWins} ({getPercentage(stats.headsWins)}%)
-      </div>
+      <div>H: {getPercentage(stats.headsWins)}%</div>
       <div>Games: {stats.gamesCount}</div>
-      <div>
-        T: {stats.tailsWins} ({getPercentage(stats.tailsWins)}%)
-      </div>
+      <div>T: {getPercentage(stats.tailsWins)}%</div>
     </div>
   );
 };
