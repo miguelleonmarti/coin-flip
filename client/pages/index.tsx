@@ -101,13 +101,18 @@ const Home: NextPage = () => {
     });
     contract?.events.Result().on("data", (event: any) => {
       const { winner, loser, result } = event.returnValues;
-      setStats((object) => ({ ...object, gamesCount: object.gamesCount + 1 }));
-      if (winner !== address && loser !== address) return;
+      const isPlayer = winner === address || loser === address;
       if (result === "0") {
-        setStats((object) => ({ ...object, headsWins: object.headsWins + 1 }));
+        setStats((object) => {
+          return { ...object, gamesCount: object.gamesCount + 1, headsWins: object.headsWins + 1 };
+        });
+        if (!isPlayer) return;
         setResult("HEADS");
       } else {
-        setStats((object) => ({ ...object, tailsWins: object.tailsWins + 1 }));
+        setStats((object) => {
+          return { ...object, gamesCount: object.gamesCount + 1, tailsWins: object.tailsWins + 1 };
+        });
+        if (!isPlayer) return;
         setResult("TAILS");
       }
       setFlip(true);
