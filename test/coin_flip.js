@@ -27,7 +27,7 @@ contract("CoinFlip", function (accounts) {
   });
 
   it("should be rejected because bet price and msg.value are not equal", async function () {
-    // const instance = await CoinFlip.deployed();
+    const instance = await CoinFlip.deployed();
 
     await instance.play(0, { from: accounts[0], value: 2 * BET_PRICE }).should.be.rejectedWith("Invalid price");
   });
