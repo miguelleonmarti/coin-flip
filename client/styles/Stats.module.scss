@@ -1,5 +1,15 @@
 @import "_variables";
 
 .stats {
-    color: $prime;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: $prime;
+    color: $second;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: .5rem 0;
 }
