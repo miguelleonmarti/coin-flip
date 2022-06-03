@@ -1,0 +1,16 @@
+@import "_variables";
+
+.info {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: $prime;
+    color: $second;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: .5rem 0;
+    z-index: 1000;
+}

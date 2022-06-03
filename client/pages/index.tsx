@@ -1,105 +1,60 @@
 import type { NextPage } from "next";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import styles from "../styles/Home.module.scss";
 
 // web3
-import Web3Modal from "web3modal";
-import Core from "web3modal";
-import WalletConnectProvider from "@walletconnect/web3-provider";
 import Web3 from "web3";
-import { AbiItem, toNumber } from "web3-utils";
-import { Contract } from "web3-eth-contract";
-import CoinFlip from "../contracts/CoinFlip.json";
+import { Web3Context } from "../hooks/Web3Context";
 
 // components
 import Connect from "../components/Connect";
 import Game from "../components/Game";
 import Stats from "../components/Stats";
+import Info from "../components/Info";
 
 const Home: NextPage = () => {
-  const [web3Modal, setWeb3Modal] = useState<Core | null>(null);
-  const [address, setAddress] = useState("");
-  const [contract, setContract] = useState<Contract>();
   const [stats, setStats] = useState({ gamesCount: 0, headsWins: 0, tailsWins: 0 });
   const [flip, setFlip] = useState(false);
   const [result, setResult] = useState(";)");
 
-  // modal
-  useEffect(() => {
-    const providerOptions = {
-      walletconnect: {
-        package: WalletConnectProvider,
-        options: {
-          infuraId: process.env.REACT_APP_INFURA_PROJECT_SECRET,
-        },
-      },
-    };
-
-    const newWeb3Modal = new Web3Modal({
-      cacheProvider: true,
-      network: process.env.REACT_APP_NETWORK,
-      providerOptions,
-    });
-
-    setWeb3Modal(newWeb3Modal);
-  }, []);
-
-  // connect automatically and without a popup if user is already connected
-  useEffect(() => {
-    if (web3Modal && web3Modal.cachedProvider) {
-      connectWallet();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [web3Modal]);
+  const { contract, address, connectWallet } = useContext(Web3Context);
 
   useEffect(() => {
     if (!contract) return;
     loadData();
     addContractListeners();
     return () => {
-      contract.events.allEvents().off();
+      // contract.events.allEvents().off();
+      contract.events.NeedToWait().off();
+      contract.events.Result().off();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contract]);
 
-  async function connectWallet() {
-    if (!web3Modal) return;
-    const provider = await web3Modal.connect();
-    addModalListeners(provider);
-    const web3 = new Web3(provider);
-    const accounts = await web3.eth.getAccounts();
-    setAddress(accounts[0]);
-    const contract = new web3.eth.Contract(CoinFlip.abi as AbiItem[], "0xc51881Fc2DCA03D514587BB8498A3F2136289e8f");
-    setContract(contract);
-  }
-
   async function loadData() {
-    const [gamesCount, headsWins, tailsWins] = (
-      await Promise.all([contract?.methods.gamesCount().call(), contract?.methods.headsWins().call(), contract?.methods.tailsWins().call()])
-    ).map((e) => Number(e));
-    setStats((object) => ({ ...object, gamesCount, headsWins, tailsWins }));
-  }
-
-  async function addModalListeners(web3ModalProvider: any) {
-    web3ModalProvider.on("accountsChanged", (accounts: any) => {
-      window.location.reload();
-    });
-
-    // Subscribe to chainId change
-    web3ModalProvider.on("chainChanged", (chainId: any) => {
-      window.location.reload();
-    });
+    try {
+      const [gamesCount, headsWins, tailsWins] = (
+        await Promise.all([
+          contract?.methods.gamesCount().call(),
+          contract?.methods.headsWins().call(),
+          contract?.methods.tailsWins().call(),
+        ])
+      ).map((e) => Number(e));
+      setStats((object) => ({ ...object, gamesCount, headsWins, tailsWins }));
+    } catch (error) {
+      console.log("hola:", error);
+    }
   }
 
   async function addContractListeners() {
-    contract?.events.NeedToWait().on("data", (event: any) => {
+    contract.events.NeedToWait().on("data", (event: any) => {
       const { player } = event.returnValues;
       if (player === address) {
         setResult("?");
         setFlip(true);
       }
     });
-    contract?.events.Result().on("data", (event: any) => {
+    contract.events.Result().on("data", (event: any) => {
       const { winner, loser, result } = event.returnValues;
       const isPlayer = winner === address || loser === address;
       if (result === "0") {
@@ -131,6 +86,7 @@ const Home: NextPage = () => {
       ) : (
         <>
           <Stats stats={stats} />
+          <Info />
           <Game play={play} flip={flip} setFlip={setFlip} result={result} />
         </>
       )}
