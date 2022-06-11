@@ -15,3 +15,10 @@ It is a multiplayer game so you play against other online players. Once you have
 - NextJS
 - Chai
 - Ganache
+
+## Setup
+
+- Clone the repository: `git clone https://github.com/miguelleonmarti/coin-flip`
+- Install dependencies: `npm i`
+- Run tests: `npm run test`
+- Set your environment variables (as on `.env.example`) on `.env` 
