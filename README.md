@@ -1,5 +1,7 @@
 # CoinFlip 🎲
 
+[![Tests](https://github.com/miguelleonmarti/coin-flip/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/miguelleonmarti/coin-flip/actions/workflows/test.yml)
+
 Decentralized app that emulates the typical flip a coin game using solidity smart contracts.
 
 ## How does it work?
