@@ -1,0 +1,28 @@
+{
+  "name": "coin-flip",
+  "version": "1.0.0",
+  "description": "Decentralized app that emulates the typical flip a coin game using solidity smart contracts.",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "truffle test",
+    "deploy:local": "truffle deploy",
+    "deploy:ropsten": "truffle deploy --network ropsten"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miguelleonmarti/coin-flip.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/miguelleonmarti/coin-flip/issues"
+  },
+  "homepage": "https://github.com/miguelleonmarti/coin-flip#readme",
+  "dependencies": {
+    "@truffle/hdwallet-provider": "^2.0.8",
+    "dotenv": "^16.0.1"
+  }
+}
